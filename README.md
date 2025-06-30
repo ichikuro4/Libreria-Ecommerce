@@ -198,7 +198,7 @@ Este proyecto está bajo la Licencia MIT - ver el archivo [LICENSE](LICENSE) par
 
 ## 👥 Autores
 
-- Tu Nombre - [@tu_usuario](https://github.com/tu_usuario)
+- Ichikuro
 
 ## 🙏 Agradecimientos
 
