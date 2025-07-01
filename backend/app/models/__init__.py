@@ -3,11 +3,12 @@ Exportar todos los modelos para fácil importación
 """
 
 # Base y Enums
-from .base import OrderStatus, PaymentStatus, UserRole, DiscountType
+from .base import OrderStatus, PaymentStatus, UserRole, DiscountType, TipoDocumento, Genero
 
 # User models
 from .user_models import (
-    User, UserCreate, UserRead, UserUpdate,
+    User, UserCreate, UserRead, UserUpdate, 
+    UserChangePassword, UserRegister, UserLogin,
     Address, AddressCreate, AddressRead, AddressUpdate
 )
 
@@ -17,7 +18,6 @@ from .book_models import (
     Author, AuthorCreate, AuthorRead, AuthorUpdate,
     Category, CategoryCreate, CategoryRead, CategoryUpdate,
     Publisher, PublisherCreate, PublisherRead, PublisherUpdate,
-    # Junction tables
     BookAuthor, BookCategory
 )
 
@@ -43,10 +43,11 @@ from .review_models import (
 
 __all__ = [
     # Base
-    'OrderStatus', 'PaymentStatus', 'UserRole', 'DiscountType',
+    'OrderStatus', 'PaymentStatus', 'UserRole', 'DiscountType', 'TipoDocumento', 'Genero',
     
     # Users
-    'User', 'UserCreate', 'UserRead', 'UserUpdate',
+    'User', 'UserCreate', 'UserRead', 'UserUpdate', 
+    'UserChangePassword', 'UserRegister', 'UserLogin',
     'Address', 'AddressCreate', 'AddressRead', 'AddressUpdate',
     
     # Books

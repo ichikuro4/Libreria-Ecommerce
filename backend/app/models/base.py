@@ -26,3 +26,13 @@ class UserRole(str, Enum):
 class DiscountType(str, Enum):
     PERCENTAGE = "porcentaje"
     FIXED_AMOUNT = "monto_fijo"
+
+class TipoDocumento(str, Enum):
+    DNI = "DNI"
+    RUC = "RUC"
+    CE = "CE"  # Carné de Extranjería
+
+class Genero(str, Enum):
+    MASCULINO = "masculino"
+    FEMENINO = "femenino"
+    NO_ESPECIFICADO = "no_especificado"

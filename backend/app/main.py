@@ -14,7 +14,7 @@ async def lifespan(app: FastAPI):
     print("Application Startup: Initialize resources.")
     async with engine.begin() as conn:
         # Eliminar y crear todas las tablas en startup
-        #await conn.run_sync(SQLModel.metadata.drop_all)
+        await conn.run_sync(SQLModel.metadata.drop_all)
         await conn.run_sync(SQLModel.metadata.create_all)
     
     yield
