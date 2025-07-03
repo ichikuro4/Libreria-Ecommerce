@@ -393,3 +393,136 @@ async def get_book_categories(book_id: int, session: AsyncSession = Depends(get_
         
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
+
+@router.patch("/{book_id}/stock")
+async def update_stock(
+    book_id: int, 
+    new_stock: int = Query(..., ge=0, description="Nuevo stock del libro"),
+    session: AsyncSession = Depends(get_session)
+):
+    """Actualizar solo el stock de un libro"""
+    try:
+        result = await session.execute(select(Book).where(Book.id == book_id))
+        book = result.scalar_one_or_none()
+        
+        if not book:
+            raise HTTPException(status_code=404, detail="Libro no encontrado")
+        
+        # Guardar stock anterior para el log
+        old_stock = book.stock
+        
+        # Actualizar stock
+        book.stock = new_stock
+        await session.commit()
+        
+        return {
+            "message": "Stock actualizado exitosamente",
+            "book_id": book_id,
+            "libro_titulo": book.titulo,
+            "stock_anterior": old_stock,
+            "stock_nuevo": new_stock,
+            "diferencia": new_stock - old_stock
+        }
+        
+    except HTTPException:
+        raise
+    except Exception as e:
+        await session.rollback()
+        raise HTTPException(status_code=500, detail=str(e))
+
+# ===== ENDPOINT ADICIONAL ÚTIL: Actualizar stock múltiple =====
+
+@router.patch("/bulk-update-stock")
+async def bulk_update_stock(
+    stock_updates: List[dict],  # [{"book_id": 1, "new_stock": 50}, {"book_id": 2, "new_stock": 30}]
+    session: AsyncSession = Depends(get_session)
+):
+    """Actualizar stock de múltiples libros a la vez"""
+    try:
+        updated_books = []
+        
+        for update in stock_updates:
+            book_id = update.get("book_id")
+            new_stock = update.get("new_stock")
+            
+            if book_id is None or new_stock is None:
+                continue
+                
+            if new_stock < 0:
+                continue
+            
+            # Buscar el libro
+            result = await session.execute(select(Book).where(Book.id == book_id))
+            book = result.scalar_one_or_none()
+            
+            if book:
+                old_stock = book.stock
+                book.stock = new_stock
+                updated_books.append({
+                    "book_id": book_id,
+                    "titulo": book.titulo,
+                    "stock_anterior": old_stock,
+                    "stock_nuevo": new_stock
+                })
+        
+        await session.commit()
+        
+        return {
+            "message": f"Stock actualizado para {len(updated_books)} libros",
+            "libros_actualizados": updated_books
+        }
+        
+    except Exception as e:
+        await session.rollback()
+        raise HTTPException(status_code=500, detail=str(e))
+
+# ===== ENDPOINT ADICIONAL: Alertas de stock bajo =====
+
+@router.get("/low-stock-alerts")
+async def get_low_stock_alerts(
+    threshold: int = Query(None, description="Umbral personalizado, si no se proporciona usa stock_minimo"),
+    session: AsyncSession = Depends(get_session)
+):
+    """Obtener libros con stock bajo"""
+    try:
+        if threshold is not None:
+            # Usar umbral personalizado
+            query = select(Book).where(
+                and_(
+                    Book.esta_activo == True,
+                    Book.stock <= threshold
+                )
+            )
+        else:
+            # Usar stock_minimo de cada libro
+            query = select(Book).where(
+                and_(
+                    Book.esta_activo == True,
+                    Book.stock <= Book.stock_minimo
+                )
+            )
+        
+        result = await session.execute(query)
+        low_stock_books = result.scalars().all()
+        
+        alerts = []
+        for book in low_stock_books:
+            alerts.append({
+                "book_id": book.id,
+                "titulo": book.titulo,
+                "sku": book.sku,
+                "stock_actual": book.stock,
+                "stock_minimo": book.stock_minimo,
+                "necesita_restock": book.stock_minimo - book.stock,
+                "estado_critico": book.stock == 0
+            })
+        
+        return {
+            "total_alertas": len(alerts),
+            "libros_sin_stock": len([a for a in alerts if a["estado_critico"]]),
+            "libros_stock_bajo": len([a for a in alerts if not a["estado_critico"]]),
+            "alertas": alerts
+        }
+        
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
