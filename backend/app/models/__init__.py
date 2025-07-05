@@ -7,8 +7,8 @@ from .base import OrderStatus, PaymentStatus, UserRole, DiscountType, TipoDocume
 
 # User models
 from .user_models import (
-    User, UserCreate, UserRead, UserUpdate, 
-    UserChangePassword, UserRegister, UserLogin,
+    User, UserCreate, UserRead, UserUpdate, UserChangePassword, 
+    UserRegister, UserLogin, TokenResponse, RefreshTokenRequest, ChangePasswordRequest,
     Address, AddressCreate, AddressRead, AddressUpdate
 )
 
@@ -69,4 +69,7 @@ __all__ = [
     # Reviews
     'Review', 'ReviewCreate', 'ReviewRead', 'ReviewUpdate',
     'WishList', 'WishListCreate', 'WishListRead',
+    
+    # Auth models
+    'TokenResponse', 'RefreshTokenRequest', 'ChangePasswordRequest',
 ]

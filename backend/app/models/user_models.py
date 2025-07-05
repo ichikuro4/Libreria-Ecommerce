@@ -158,3 +158,20 @@ class AddressUpdate(SQLModel):
     codigo_postal: Optional[str] = None
     es_predeterminada: Optional[bool] = None
     tipo: Optional[str] = None
+
+# Modelo para respuesta de login
+class TokenResponse(SQLModel):
+    access_token: str
+    refresh_token: str
+    token_type: str = "bearer"
+    expires_in: int  # segundos
+    user: UserRead
+
+# Modelo para refresh token
+class RefreshTokenRequest(SQLModel):
+    refresh_token: str
+
+# Modelo para cambio de contraseña
+class ChangePasswordRequest(SQLModel):
+    current_password: str
+    new_password: str = Field(min_length=8)

@@ -3,6 +3,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy import select, and_
 from sqlalchemy.orm import selectinload  # Para eager loading
 from typing import List, Optional
+from app.core.deps import require_admin
 
 from app.db.session import get_session
 from app.models import (
