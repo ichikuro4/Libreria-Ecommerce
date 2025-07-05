@@ -7,7 +7,7 @@ from .base import OrderStatus, PaymentStatus, UserRole, DiscountType, TipoDocume
 
 # User models
 from .user_models import (
-    User, UserCreate, UserRead, UserUpdate, UserChangePassword, 
+    User, UserCreate,UserCreateAdmin, UserRead, UserUpdate, UserChangePassword, 
     UserRegister, UserLogin, TokenResponse, RefreshTokenRequest, ChangePasswordRequest,
     Address, AddressCreate, AddressRead, AddressUpdate
 )
@@ -46,7 +46,7 @@ __all__ = [
     'OrderStatus', 'PaymentStatus', 'UserRole', 'DiscountType', 'TipoDocumento', 'Genero',
     
     # Users
-    'User', 'UserCreate', 'UserRead', 'UserUpdate', 
+    'User', 'UserCreate','UserCreateAdmin', 'UserRead', 'UserUpdate', 
     'UserChangePassword', 'UserRegister', 'UserLogin',
     'Address', 'AddressCreate', 'AddressRead', 'AddressUpdate',
     

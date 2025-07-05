@@ -52,6 +52,22 @@ class UserCreate(SQLModel):
     fecha_nacimiento: Optional[date] = None
     genero: Genero = Genero.NO_ESPECIFICADO
     acepta_marketing: bool = False
+    # ✅ AGREGAR CAMPO ROL PARA ADMIN
+    rol: UserRole = UserRole.CUSTOMER 
+
+class UserCreateAdmin(SQLModel):
+    """Schema para que admin cree usuarios con cualquier rol"""
+    nombre: str
+    apellido: str
+    email: str
+    password: str = Field(min_length=8)
+    telefono: Optional[str] = None
+    tipo_documento: TipoDocumento
+    numero_documento: str = Field(min_length=8, max_length=20)
+    fecha_nacimiento: Optional[date] = None
+    genero: Genero = Genero.NO_ESPECIFICADO
+    acepta_marketing: bool = False
+    rol: UserRole = UserRole.CUSTOMER  # ✅ Admin puede especificar cualquier rol# Por defecto cliente, admin puede cambiar
 
 class UserRead(SQLModel):
     id: int
@@ -74,10 +90,11 @@ class UserUpdate(SQLModel):
     nombre: Optional[str] = None
     apellido: Optional[str] = None
     telefono: Optional[str] = None
-    # ✅ PERMITIR ACTUALIZAR NUEVOS CAMPOS
     fecha_nacimiento: Optional[date] = None
     genero: Optional[Genero] = None
     acepta_marketing: Optional[bool] = None
+    # ✅ PERMITIR ACTUALIZAR ROL (solo admin puede usarlo)
+    rol: Optional[UserRole] = None
 
 # Modelo para cambio de contraseña
 class UserChangePassword(SQLModel):
